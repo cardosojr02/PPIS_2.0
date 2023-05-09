@@ -1,11 +1,11 @@
 <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
+                    <div class="container_fluid">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2019</div>
+                            <div class="text-muted">Copyright 2023 &copy; PPIS 2.0 - ITFIP</div>
                             <div>
-                                <a href="#">Privacy Policy</a>
+                                <a href="#">Politicas de Privacidad</a>
                                 &middot;
-                                <a href="#">Terms &amp; Conditions</a>
+                                <a href="#">Terminos &amp; Condiciones</a>
 							</div>
 						</div>
 					</div>

@@ -10,16 +10,18 @@ $nombre = (isset($_POST['nombre'])) ? $_POST['nombre'] : '';
 $apellido = (isset($_POST['apellido'])) ? $_POST['apellido'] : '';
 $email = (isset($_POST['email'])) ? $_POST['email'] : '';
 $tipo_usuario = (isset($_POST['tipo_usuario'])) ? $_POST['tipo_usuario'] : '';
+$usuario = (isset($_POST['usuario'])) ? $_POST['usuario'] : '';
+$pass = (isset($_POST['pass'])) ? $_POST['pass'] : '';
 
 
 switch($opcion){
     case 1:
-        $consulta = "INSERT INTO usuarios (nombre, apellido, email, tipo_usuario) VALUES('$nombre', '$apellido', '$email', '$tipo_usuario') ";	
+        $consulta = "INSERT INTO usuarios (nombre, apellido, email, tipo_usuario, usuario, pass, fecha_sys ) VALUES('$nombre', '$apellido', '$email', '$tipo_usuario', '$usuario', '$pass', now()) ";	
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();                
         break;
     case 2:
-        $consulta = "UPDATE usuarios SET nombre='$nombre', apellido='$apellido', email='$email', tipo_usuario='$tipo_usuario' WHERE id='$id' ";		
+        $consulta = "UPDATE usuarios SET nombre='$nombre', apellido='$apellido', email='$email', tipo_usuario='$tipo_usuario' , usuario='$usuario' , pass='$pass' WHERE id='$id' ";		
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();                        
         $data=$resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -30,7 +32,7 @@ switch($opcion){
         $resultado->execute();                           
         break;         
     case 4:
-        $consulta = "SELECT id, nombre, apellido, email, tipo_usuario FROM usuarios";
+        $consulta = "SELECT id, nombre, apellido, email, tipo_usuario, usuario, pass, fecha_sys FROM usuarios";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data=$resultado->fetchAll(PDO::FETCH_ASSOC);

@@ -60,10 +60,15 @@
 							
 							<div class="sb-sidenav-menu-heading">Administracion de usuarios</div>
 							<a class="nav-link" href="usuarios.php">
-							<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>CRUD</a>
-							<a class="nav-link" href="tabla.php"
-							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>LOGS</a>
-							</div>
+							<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>Usuarios</a>
+                            <a class="nav-link" href="usuarios.php">
+							<div class="sb-nav-link-icon"><i class="fas fa-diagnoses"></i></div>Responsables</a>
+                            
+                            <div class="sb-sidenav-menu-heading">Administracion de Procesos</div>
+							<a class="nav-link" href="#"
+							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>Procesos</a>
+                            
+							
 					</div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>

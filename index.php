@@ -41,8 +41,8 @@
                   <label for="usuario">Usuario</label>
                 </div>
                 <div class="form-floating mb-3">
-                  <input type="password" class="form-control" name="password" id="password" placeholder="Password" Required>
-                  <label for="password">Password</label>
+                  <input type="pass" class="form-control" name="pass" id="pass" placeholder="Password" Required>
+                  <label for="pass">Password</label>
                 </div>
                 <div class="d-grid">
                   <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2" type="submit">Entrar</button>
@@ -51,18 +51,18 @@
 if($_POST){
 		
 		$usuario = $_POST['usuario'];
-		$password = $_POST['password'];
+		$pass = $_POST['pass'];
 		
-		$sql = "SELECT id, password, nombre, apellido, tipo_usuario FROM usuarios WHERE usuario='$usuario'";
+		$sql = "SELECT id, pass, nombre, apellido, tipo_usuario FROM usuarios WHERE usuario='$usuario'";
 		//echo $sql;
 		$resultado = $mysqli->query($sql);
 		$num = $resultado->num_rows;
 		
 		if($num>0){
 			$row = $resultado->fetch_assoc();
-			$password_bd = $row['password'];
+			$password_bd = $row['pass'];
 			
-			$pass_c = sha1($password);
+			$pass_c = sha1($pass);
 			
 			if($password_bd == $pass_c){
 				

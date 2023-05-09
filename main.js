@@ -1,3 +1,5 @@
+
+
 var url = "bd/crud.php";
 
 var appMoviles = new Vue({
@@ -9,15 +11,24 @@ var appMoviles = new Vue({
     email: "",
     tipo_usuario: "",
     total: 0,
+    term: ""
   },
   methods: {
-    //BOTONES        
+
+    
+    
+    //BOTONES
     btnAlta: async function () {
       const { value: formValues } = await Swal.fire({
         title: 'NUEVO',
         html:
-          '<div class="row"><label class="col-sm-3 col-form-label">Nombre</label><div class="col-sm-7"><input id="nombre" type="text" class="form-control" required></div></div><div class="row"><label class="col-sm-3 col-form-label">Apellido</label><div class="col-sm-7"><input id="apellido" type="text" class="form-control" required></div></div><div class="row"><label class="col-sm-3 col-form-label">Email</label><div class="col-sm-7"><input id="email" type="email"  class="form-control" required></div><div class="row"><label class="col-sm-6 col-form-label">Rol</label><div class="col-sm-6 center"><input id="tipo_usuario" type="number"  value="1" class="form-control" required></div></div>',
-        focusConfirm: false,
+          '<div class="row"><label class="col-sm-3 col-form-label">Nombre</label><div class="col-sm-9"><input id="nombre" type="text" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Apellido</label><div class="col-sm-9"><input id="apellido" type="text" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Email</label><div class="col-sm-9"><input id="email" type="email" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Rol</label><div class="col-sm-9"><input id="tipo_usuario" type="number" min="1" max="2" value="1" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Usuario</label><div class="col-sm-9"><input id="usuario" type="text" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Contraseña</label><div class="col-sm-9"><input id="pass" type="password" class="form-control" required></div></div>',
+        focusConfirm: true,
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         confirmButtonColor: '#1cc88a',
@@ -27,11 +38,22 @@ var appMoviles = new Vue({
           const apellido = document.getElementById('apellido').value;
           const email = document.getElementById('email').value;
           const tipo_usuario = document.getElementById('tipo_usuario').value;
+          const usuario = document.getElementById('usuario').value;
+          const pass = document.getElementById('pass').value;
 
           // Validar que los campos no estén vacíos y que el valor de tipo_usuario esté dentro del rango permitido
-          if (nombre === '' || apellido === '' || email === '' || tipo_usuario === '' || tipo_usuario < 1 || tipo_usuario > 2) {
+          if (
+            nombre === '' ||
+            apellido === '' ||
+            email === '' ||
+            tipo_usuario === '' ||
+            tipo_usuario < 1 ||
+            tipo_usuario > 2 ||
+            usuario === '' ||
+            pass === ''
+          ) {
             Swal.showValidationMessage(
-              'Por favor, complete todos los campos, ingrese un correo electrónico válido y seleccione un rol válido.'
+              'Por favor, complete todos los campos y seleccione un rol válido.'
             );
           }
 
@@ -43,32 +65,33 @@ var appMoviles = new Vue({
             );
           }
 
-          // Retornar los valores si todo está correcto
-          return { nombre, apellido, email, tipo_usuario };
-        }
-      });
-
-      if (formValues) {
-        this.nombre = formValues.nombre;
-        this.apellido = formValues.apellido;
-        this.email = formValues.email;
-        this.tipo_usuario = formValues.tipo_usuario;
-
-        this.altaMovil();
-
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
-
-        Toast.fire({
-          type: 'success',
-          title: '¡Usuario Agregado!'
-        });
-      }
-    },
+          // Retornar losvalores si todo está correcto
+            return { nombre, apellido, email, tipo_usuario, usuario, pass };
+            }
+            });
+            if (formValues) {
+              this.nombre = formValues.nombre;
+              this.apellido = formValues.apellido;
+              this.email = formValues.email;
+              this.tipo_usuario = formValues.tipo_usuario;
+              this.usuario = formValues.usuario;
+              this.pass = formValues.pass;
+        
+              this.altaMovil();
+            }
+          
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+          
+            Toast.fire({
+              type: 'success',
+              title: '¡Usuario Agregado!'
+            });
+          },
 
 
     btnEditar: async function (id, nombre, apellido, email, tipo_usuario) {
@@ -139,33 +162,63 @@ var appMoviles = new Vue({
     },
 
     //PROCEDIMIENTOS para el CRUD     
-    listarMoviles: function () {
+       listarMoviles: function () {
+        axios.post(url, { opcion: 4 }).then(response => {
+          this.usuarios = response.data;
       
-      axios.post(url, { opcion: 4 }).then(response => {
-        this.usuarios = response.data;
-      });
-    },
+          // Filtrar la lista de usuarios en función del término de búsqueda
+          if (this.term !== "") {
+            this.usuarios = this.usuarios.filter(usuario => {
+              const nombreCompleto = `${usuario.nombre} ${usuario.apellido}`.toLowerCase();
+              return nombreCompleto.includes(this.term.toLowerCase());
+            });
+          }
+        });
+      },
     // Procedimiento CREAR.
-altaMovil: function() {
-  if (!this.validarUsuario()) {
-    return;
-  }
+    altaMovil: async function () {
+      if (!this.validarUsuario()) {
+        return;
+      }
   
-  axios.post(url, { 
-    opcion: 1, 
-    nombre: this.nombre, 
-    apellido: this.apellido, 
-    email: this.email, 
-    tipo_usuario: this.tipo_usuario 
-  }).then(response => {
-    this.listarMoviles();
-  });
-
-  this.nombre = "";
-  this.apellido = "";
-  this.email = "";
-  this.tipo_usuario = "";
-},
+      try {
+        const response = await axios.post(url, {
+          opcion: 1,
+          nombre: this.nombre,
+          apellido: this.apellido,
+          email: this.email,
+          tipo_usuario: this.tipo_usuario,
+          usuario: this.usuario,
+          pass: this.pass
+        });
+  
+        if (response.data === "existe") {
+          Swal.fire({
+            iconHtml: "error",
+            title: "Error",
+            text: "El usuario ya existe"
+          });
+        } else {
+          this.listarMoviles();
+  
+          this.nombre = "";
+          this.apellido = "";
+          this.email = "";
+          this.tipo_usuario = "";
+          this.usuario = ""; // Limpiar el valor de usuario después de agregarlo a la base de datos
+          this.pass = ""; // Limpiar el valor de pass después de agregarlo a la base de datos
+  
+          Swal.fire({
+            icon: "success",
+            title: "¡Usuario Agregado!",
+            showConfirmButton: false,
+            timer: 3000
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },  
 
 // Función para validar si el usuario ya existe.
 validarUsuario: function() {
@@ -206,6 +259,7 @@ validarUsuario: function() {
   },
   created: function () {
     this.listarMoviles();
+    this.$watch('term', this.listarMoviles);
   },
   computed: {
     totalStock() {

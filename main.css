@@ -1,3 +1,9 @@
 body{
-    background: #e1e2e1;
+    background: #ecf6ff;
+}
+.sticky-header {
+    position: fixed;
+    top: 0;
+    background-color: #fff; /* Cambia esto al color de fondo deseado */
+    z-index: 1;
 }

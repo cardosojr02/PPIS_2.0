@@ -1,3 +1,4 @@
+<?php require_once "vistas/parte_superior.php"?>
 <!-- Bootstrap CSS -->    
 <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <!-- FontAwesom CSS -->
@@ -6,21 +7,34 @@
     <link rel="stylesheet" href="plugins/sweetalert2/sweetalert2.min.css">        
     <!--CSS custom -->  
     <link rel="stylesheet" href="main.css">
-<?php require_once "vistas/parte_superior.php"?>
+
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mt-4">Menu Principal</h1>
+                        <h1 class="mt-4">Administracion de Usuarios</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Panel Administrador</li>
 						</ol>
                         <header>
-        <h2 class="text-center text-dark"><span class="badge badge-primary">LISTA DE USUARIOS PPIS 2.0</span></h2>
+        <h2 class="text-center text-dark"><span class="badge badge">LISTA DE USUARIOS PPIS 2.0</span></h2>
     </header>    
     
      <div id="appMoviles">               
         <div class="container">                
-            <div class="row">       
+            <div class="row">
+               <!-- BARRA DE BUSQUEDA  -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                        <input type="text" v-model="term" class="form-control" placeholder="Buscar usuario">
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                            </span>
+                        </div>
+                        </div>
+                    </div>
+                </div> 
                 <div class="col">        
                     <button @click="btnAlta" class="btn btn-primary" title="Nuevo"><i class="fas fa-plus-circle fa-2x"></i></button>
                 </div>
@@ -30,14 +44,18 @@
             </div>                
             <div class="row mt-6">
                 <div class="col-lg-12">                    
-                    <table class="table table-striped">
+                    <table class="table table-striped table-hover">
                         <thead>
+                            
                             <tr class="bg-primary text-light">
                                 <th>ID</th>                                    
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Email</th> 
-                                <th>Rol</th>   
+                                <th>Rol</th>
+                                <th>Usuario</th>
+                                <th>Password</th>   
+                                <th>Creación</th>   
                                 <th>Acciones</th>
                             </tr>    
                         </thead>
@@ -48,6 +66,9 @@
                                 <td>{{usuarios.apellido}}</td>
                                 <td>{{usuarios.email}}</td>
                                 <td>{{usuarios.tipo_usuario}}</td>
+                                <td>{{usuarios.usuario}}</td>
+                                <td>{{usuarios.pass}}</td>
+                                <td>{{usuarios.fecha_sys}}</td>
                                 <td>
                                 <div class="btn-group" role="group">
                                     <button class="btn btn-secondary" title="Editar" @click="btnEditar(usuarios.id, usuarios.nombre, usuarios.apellido, usuarios.email, usuarios.tipo_usuario)"><i class="fas fa-pencil-alt"></i></button>    
@@ -76,5 +97,10 @@
     <script src="plugins/sweetalert2/sweetalert2.all.min.js"></script>      
     <!--Código custom -->          
     <script src="main.js"></script>
-<?php require_once "vistas/parte_inferior.php"?>
+    
+   
+                  
+</html>
+
+
                 
