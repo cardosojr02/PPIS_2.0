@@ -34,8 +34,7 @@
 		<meta name="author" content="" />
 		<title>Tables - SB Admin</title>
 		<link href="css/styles.css" rel="stylesheet" />
-		<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+		
 	</head>
 	<body class="sb-nav-fixed">
 	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -128,43 +127,55 @@
 						<div class="card mb-4">
 							<div class="card-body">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>.</div>
 						</div>
+						<div id="appMoviles">
 						<div class="card mb-4">
 							<div class="card-header"><i class="fas fa-table mr-1"></i>DataTable Example</div>
 							<div class="card-body">
 								<div class="table-responsive">
 									<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-										<thead>
-											<tr>
-												<th>Usuario</th>
-												<th>Password</th>
-												<th>Nombre</th>
-												<th>Tipo Usuario</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Usuario</th>
-												<th>Password</th>
-												<th>Nombre</th>
-												<th>Tipo Usuario</th>
-											</tr>
-										</tfoot>
-										<tbody>
-											<?php while($row = $resultado->fetch_assoc()) { ?>
-												
-												<tr>
-													<td><?php echo $row['usuario']; ?></td>
-													<td><?php echo $row['password']; ?></td>
-													<td><?php echo $row['nombre']; ?></td>
-													<td><?php echo $row['tipo_usuario']; ?></td>
-												</tr>
-											<?php } ?>
+									<thead>
+                            
+                            <tr class="bg-primary text-light">
+                                <th>ID</th>                                    
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Email</th>
+                                <th>Documento</th> 
+                                <th>Telefono</th> 
+                                <th>Rol</th>
+                                <th>Usuario</th>
+                                <th>Password</th>   
+                                <th>Creación</th>   
+                                <th>Acciones</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr v-for="(usuarios,indice) of usuarios">                                
+                                <td>{{usuarios.id}}</td>                                
+                                <td>{{usuarios.nombre}}</td>
+                                <td>{{usuarios.apellido}}</td>
+                                <td>{{usuarios.email}}</td>
+                                <td>{{usuarios.documento}}</td>
+                                <td>{{usuarios.telefono}}</td>
+                                <td>{{usuarios.tipo_usuario}}</td>
+                                <td>{{usuarios.usuario}}</td>
+                                <td>{{usuarios.pass}}</td>
+                                <td>{{usuarios.fecha_sys}}</td>
+                                <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-secondary" title="Editar" @click="btnEditar(usuarios.id, usuarios.nombre, usuarios.apellido, usuarios.email, usuarios.tipo_usuario)"><i class="fas fa-pencil-alt"></i></button>    
+                                    <button class="btn btn-danger" title="Eliminar" @click="btnBorrar(usuarios.id)"><i class="fas fa-trash-alt"></i></button>      
+								</div>
+                                </td>
+                            </tr>    
+                        </tbody>
 										</tbody>
 									</table>
 								</div>
 								</div>
 								</div>
 											</div>
+							</div>
 					</main>
 					<footer class="py-4 bg-light mt-auto">
 						<div class="container-fluid">

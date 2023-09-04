@@ -9,34 +9,39 @@ $id = (isset($_POST['id'])) ? $_POST['id'] : '';
 $nombre = (isset($_POST['nombre'])) ? $_POST['nombre'] : '';
 $apellido = (isset($_POST['apellido'])) ? $_POST['apellido'] : '';
 $email = (isset($_POST['email'])) ? $_POST['email'] : '';
+$documento = (isset($_POST['documento'])) ? $_POST['documento'] : '';
+$telefono = (isset($_POST['telefono'])) ? $_POST['telefono'] : '';
 $tipo_usuario = (isset($_POST['tipo_usuario'])) ? $_POST['tipo_usuario'] : '';
 $usuario = (isset($_POST['usuario'])) ? $_POST['usuario'] : '';
-$pass = (isset($_POST['pass'])) ? $_POST['pass'] : '';
 
 
-switch($opcion){
+// Encriptar la contraseña
+// Utilizar el número de documento como contraseña
+$pass_encriptada = password_hash($documento, PASSWORD_DEFAULT);
+
+switch ($opcion) {
     case 1:
-        $consulta = "INSERT INTO usuarios (nombre, apellido, email, tipo_usuario, usuario, pass, fecha_sys ) VALUES('$nombre', '$apellido', '$email', '$tipo_usuario', '$usuario', '$pass', now()) ";	
+        $consulta = "INSERT INTO usuarios (nombre, apellido, email, documento, telefono, tipo_usuario, usuario, pass, fecha_sys) VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();                
+        $resultado->execute([$nombre, $apellido, $email, $documento, $telefono, $tipo_usuario, $usuario, $pass_encriptada]);
         break;
     case 2:
-        $consulta = "UPDATE usuarios SET nombre='$nombre', apellido='$apellido', email='$email', tipo_usuario='$tipo_usuario' , usuario='$usuario' , pass='$pass' WHERE id='$id' ";		
+        $consulta = "UPDATE usuarios SET nombre = ?, apellido = ?, email = ?, tipo_usuario = ?, usuario = ?, pass = ? WHERE id = ?";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();                        
-        $data=$resultado->fetchAll(PDO::FETCH_ASSOC);
-        break;        
+        $resultado->execute([$nombre, $apellido, $email, $tipo_usuario, $usuario, $pass_encriptada, $id]);
+        break;
     case 3:
-        $consulta = "DELETE FROM usuarios WHERE id='$id' ";		
+        $consulta = "DELETE FROM usuarios WHERE id = ?";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();                           
-        break;         
+        $resultado->execute([$id]);
+        break;
     case 4:
-        $consulta = "SELECT id, nombre, apellido, email, tipo_usuario, usuario, pass, fecha_sys FROM usuarios";
+        $consulta = "SELECT * FROM usuarios";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $data=$resultado->fetchAll(PDO::FETCH_ASSOC);
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
 }
 print json_encode($data, JSON_UNESCAPED_UNICODE);
 $conexion = NULL;
+?>

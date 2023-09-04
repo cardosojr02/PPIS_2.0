@@ -1,9 +1,15 @@
 body{
     background: #ecf6ff;
 }
-.sticky-header {
-    position: fixed;
-    top: 0;
-    background-color: #fff; /* Cambia esto al color de fondo deseado */
-    z-index: 1;
-}
+
+  .custom-btn {
+    width: 25%;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: inline;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+        
+  }
+

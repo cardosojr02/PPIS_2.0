@@ -9,25 +9,30 @@ var appMoviles = new Vue({
     nombre: "",
     apellido: "",
     email: "",
+    pass: "",
+    documento: "",
+    telefono: "",
     tipo_usuario: "",
     total: 0,
     term: ""
   },
-  methods: {
+  methods: { 
 
     
     
     //BOTONES
     btnAlta: async function () {
-      const { value: formValues } = await Swal.fire({
-        title: 'NUEVO',
+      const { value: formValues, dismiss: dismissReason } = await Swal.fire({
+        title: 'NUEVO USUARIO',
         html:
           '<div class="row"><label class="col-sm-3 col-form-label">Nombre</label><div class="col-sm-9"><input id="nombre" type="text" class="form-control" required></div></div>' +
           '<div class="row"><label class="col-sm-3 col-form-label">Apellido</label><div class="col-sm-9"><input id="apellido" type="text" class="form-control" required></div></div>' +
           '<div class="row"><label class="col-sm-3 col-form-label">Email</label><div class="col-sm-9"><input id="email" type="email" class="form-control" required></div></div>' +
-          '<div class="row"><label class="col-sm-3 col-form-label">Rol</label><div class="col-sm-9"><input id="tipo_usuario" type="number" min="1" max="2" value="1" class="form-control" required></div></div>' +
-          '<div class="row"><label class="col-sm-3 col-form-label">Usuario</label><div class="col-sm-9"><input id="usuario" type="text" class="form-control" required></div></div>' +
-          '<div class="row"><label class="col-sm-3 col-form-label">Contraseña</label><div class="col-sm-9"><input id="pass" type="password" class="form-control" required></div></div>',
+          '<div class="row"><label class="col-sm-3 col-form-label">Contraseña</label><div class="col-sm-9"><input id="pass" type="password" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Documento</label><div class="col-sm-9"><input id="documento" type="number" maxlength="10" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Telefono</label><div class="col-sm-9"><input id="telefono" type="number"  maxlength="10" class="form-control" required></div></div>' +
+          '<div class="row"><label class="col-sm-3 col-form-label">Rol</label><div class="col-sm-9"><select id="tipo_usuario" class="form-control" required><option value="1">Administrador</option><option value="2">Docente</option></select></div></div>',
+          
         focusConfirm: true,
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -37,64 +42,102 @@ var appMoviles = new Vue({
           const nombre = document.getElementById('nombre').value;
           const apellido = document.getElementById('apellido').value;
           const email = document.getElementById('email').value;
-          const tipo_usuario = document.getElementById('tipo_usuario').value;
-          const usuario = document.getElementById('usuario').value;
           const pass = document.getElementById('pass').value;
-
+          const documento = document.getElementById('documento').value;
+          const telefono = document.getElementById('telefono').value;
+          const tipo_usuario = document.getElementById('tipo_usuario').value;
+    
+    
+          // Generar usuario
+          const usuario = (nombre.charAt(0) + apellido).replace(/\s/g, '').toLowerCase() + documento.slice(-2);
+         
+    
           // Validar que los campos no estén vacíos y que el valor de tipo_usuario esté dentro del rango permitido
           if (
             nombre === '' ||
             apellido === '' ||
             email === '' ||
+            pass === '' ||
+            documento === '' ||
+            telefono === '' ||
             tipo_usuario === '' ||
             tipo_usuario < 1 ||
-            tipo_usuario > 2 ||
-            usuario === '' ||
-            pass === ''
+            tipo_usuario > 2
           ) {
             Swal.showValidationMessage(
               'Por favor, complete todos los campos y seleccione un rol válido.'
             );
           }
-
+    
           // Validar que el email sea un correo electrónico válido
-          const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+          const regexEmail = /^[a-zA-Z0-9._-]+@itfip\.edu\.co$/;
           if (!regexEmail.test(email)) {
             Swal.showValidationMessage(
-              'Por favor, complete todos los campos, ingrese un correo electrónico válido y seleccione un rol válido.'
+              'Por favor, complete todos los campos, ingrese un correo electrónico válido (itfip.edu.co) y seleccione un rol válido.'
             );
           }
+          // Llamada AJAX para verificar si ya existe un usuario con el mismo documento
+      $.ajax({
+        url: 'verificar_documento.php', // Ruta al archivo PHP que verifica el documento
+        type: 'POST',
+        data: {
+          documento: documento
+        },
+        async: false, // Esperar la respuesta antes de continuar
+        success: function(response) {
+          if (response === 'existe') {
+            Swal.showValidationMessage(
+              'Ya existe un usuario con el mismo documento. Por favor, ingrese un documento diferente.'
+            );
+          }
+        },
+        error: function(xhr, status, error) {
+          // Manejar los errores de la petición AJAX
+          console.log("Error en la petición AJAX: " + error);
+          Swal.fire('Error', 'Ha ocurrido un error al verificar el documento', 'error');
+        }
+      });
+    
+          // Retornar los valores si todo está correcto
+          return { nombre, apellido, email, documento, telefono, tipo_usuario, usuario, pass };
+        }
+      });
+    
+      if (formValues && dismissReason !== Swal.DismissReason.cancel) {
+        this.nombre = formValues.nombre;
+        this.apellido = formValues.apellido;
+        this.email = formValues.email;
+        this.documento = formValues.documento;
+        this.telefono = formValues.telefono;
+        this.tipo_usuario = formValues.tipo_usuario;
+        this.usuario = formValues.usuario;
+        this.pass = formValues.pass;
+        this.altaMovil();
 
-          // Retornar losvalores si todo está correcto
-            return { nombre, apellido, email, tipo_usuario, usuario, pass };
-            }
-            });
-            if (formValues) {
-              this.nombre = formValues.nombre;
-              this.apellido = formValues.apellido;
-              this.email = formValues.email;
-              this.tipo_usuario = formValues.tipo_usuario;
-              this.usuario = formValues.usuario;
-              this.pass = formValues.pass;
-        
-              this.altaMovil();
-            }
-          
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-          
-            Toast.fire({
-              type: 'success',
-              title: '¡Usuario Agregado!'
-            });
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+
+          Toast.fire({
+            icon: 'success',
+            title: '¡Usuario Agregado!'
+          });
+          } else {
+          Swal.fire({
+          icon: 'warning',
+          title: 'Proceso Cancelado',
+          text: 'Se canceló el proceso de creación de nuevo usuario',
+          });
+          }
           },
 
+    
 
-    btnEditar: async function (id, nombre, apellido, email, tipo_usuario) {
+
+    btnEditar: async function (id, nombre, apellido, email, documento, telefono, tipo_usuario) {
       await Swal.fire({
         title: 'EDITAR',
         html:
@@ -120,7 +163,7 @@ var appMoviles = new Vue({
       }
     
           // Validar que los campos no estén vacíos y que el valor de tipo_usuario esté dentro del rango permitido
-          if (nombre === '' || apellido === '' || email === '' || tipo_usuario === '' || tipo_usuario < 1 || tipo_usuario > 2) {
+          if (nombre === '' || apellido === '' || email === '' || documento === '' || telefono === '' || tipo_usuario === '' || tipo_usuario < 1 || tipo_usuario > 2) {
             Swal.fire(
               '¡Error!',
               'Por favor, complete todos los campos y seleccione un rol válido.',
@@ -187,6 +230,8 @@ var appMoviles = new Vue({
           nombre: this.nombre,
           apellido: this.apellido,
           email: this.email,
+          documento: this.documento,
+          telefono: this.telefono,
           tipo_usuario: this.tipo_usuario,
           usuario: this.usuario,
           pass: this.pass
@@ -204,6 +249,8 @@ var appMoviles = new Vue({
           this.nombre = "";
           this.apellido = "";
           this.email = "";
+          this.documento = "";
+          this.telefono = "";
           this.tipo_usuario = "";
           this.usuario = ""; // Limpiar el valor de usuario después de agregarlo a la base de datos
           this.pass = ""; // Limpiar el valor de pass después de agregarlo a la base de datos
@@ -222,7 +269,7 @@ var appMoviles = new Vue({
 
 // Función para validar si el usuario ya existe.
 validarUsuario: function() {
-  if (this.nombre === "" || this.apellido === "" || this.email === "" || this.tipo_usuario === "") {
+  if (this.nombre === "" || this.apellido === "" || this.email === "" || this.documento === "" || this.telefono === "" || this.tipo_usuario === "") {
     Swal.fire({
       iconHtml: "error",
       title: "Error",

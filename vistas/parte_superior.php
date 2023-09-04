@@ -23,7 +23,9 @@
         <meta name="author" content="" />
         <title>PPIS 2.0</title>
         <link href="css/styles.css" rel="stylesheet" />
+        <link href="main.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+
         <!-- FontAwesom CSS -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">        
        
@@ -31,7 +33,7 @@
 	</head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand" href="principal.php">PPIS 2.0</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button
+            <a class="navbar-brand" href="principal.php">PPIS 2.0</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <li class="nav-item dropdown">
@@ -61,20 +63,53 @@
 							<div class="sb-sidenav-menu-heading">Administracion de usuarios</div>
 							<a class="nav-link" href="usuarios.php">
 							<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>Usuarios</a>
-                            <a class="nav-link" href="usuarios.php">
-							<div class="sb-nav-link-icon"><i class="fas fa-diagnoses"></i></div>Responsables</a>
                             
+                            
+                            <div class="sb-sidenav-menu-heading">Procesos</div>
+                            <!-- VISTA ADMINISTRADOR -->
+							<?php if($tipo_usuario == 1) { ?>
+                            <a class="nav-link" href="configuracion.php"
+							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>Configuración</a>
+                            <?php } ?>
+                            <!-- VISTA DOCENTE -->
+                            <?php if($tipo_usuario == 2) { ?>
+                                <a class="nav-link" href="#"
+							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>Mis Tareas</a>
+                            <?php } ?>
+                            <a class="nav-link" href="#"
+							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>Semaforo</a>
+							
                             <div class="sb-sidenav-menu-heading">Administracion de Procesos</div>
-							<a class="nav-link" href="#"
-							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>Procesos</a>
+                            <!-- VISTA ADMINISTRADOR -->
+							<?php if($tipo_usuario == 1) { ?>
+                            <a class="nav-link" href="#"
+							><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>CRUD de Procesos</a>
+                            <?php } ?>
                             
 							
 					</div>
                     <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        <?php 
+                        <div class="small">Logeado como:</div>
+                        <?php
+                        if ($_SESSION["tipo_usuario"]==1) {
+                            echo "<b>[Administrador]</b><br> ";
+                        }else {
+                            echo "<b>[Docente]</b><br> ";
+                        }
+                        
                         echo $_SESSION["nombre"] . " ".  $_SESSION["apellido"];
                         ?>
+                         
+					</div>
+                    <div class="sb-sidenav-footer">
+                        <div class=" align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright 2023 &copy; PPIS 2.0 - ITFIP</div>
+                            <div>
+                                <a href="#"> Politicas de Privacidad</a>
+                                &middot;
+                                <a href="#">Terminos &amp; Condiciones</a>
+							</div>
+						</div>
 					</div>
 				</nav>
 			</div>

@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteOptions InheritDown
+
+#entidad/ID/accion
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-z-]{3,})(/(crear))?$  index.php?nav=$1&accion=$3  [NC,QSA] 
+RewriteRule ^([a-z-]{3,})/([a-z-]+)\-([0-9]+)$  index.php?nav=$1&nombre=$2&id=$3 [NC,QSA] 
+RewriteRule ^([a-z-]{3,})/([a-z-]+)\-([0-9]+)/(editar|eliminar)$  index.php?nav=$1&nombre=$2&id=$3&accion=$4 [NC,QSA] 
+
+# referencias:
+# NC = No Case = No sea case sensitive 
+# QSA = QueryString Append = Agregar valores recibidos por URL en la redirección
+

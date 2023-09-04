@@ -1,25 +1,17 @@
-<footer class="py-4 bg-light mt-auto">
-                    <div class="container_fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright 2023 &copy; PPIS 2.0 - ITFIP</div>
-                            <div>
-                                <a href="#">Politicas de Privacidad</a>
-                                &middot;
-                                <a href="#">Terminos &amp; Condiciones</a>
-							</div>
-						</div>
-					</div>
-				</footer>
-			</div>
-		</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
+        
+        <!--Vue.JS -->    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>                 
+    <!--Axios -->      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js"></script>
+        
+    <!--Código custom -->          
+    <script src="../main.js"></script>
 	</body>
 </html>
