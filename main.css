@@ -1,0 +1,15 @@
+body{
+    background: #ecf6ff;
+}
+
+  .custom-btn {
+    width: 25%;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: inline;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+        
+  }
+
