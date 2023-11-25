@@ -18,50 +18,98 @@ try {
 
 if(isset($_GET['opcion'])){
     $action = $_GET['opcion'];
+    if ($action == '4' && isset($_GET['id']) && isset($_GET['estado'])) {
+        $estado=$_GET['estado'];
+        $id=$_GET['id'];
+        try {
+                
+            $consulta="UPDATE usuarios SET estado = $estado WHERE id= $id";
+            if ($conexion->query($consulta)) {
+                print '<script>
+                Swal.fire({
+                    title: "Estado Actualizado",
+                    text: "¡Estado del usuario ' . $id . ' actualizado!",
+                    icon: "success",
+                    allowOutsideClick: false,
+                    showCancelButton: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    confirmButtonText: "OK"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "usuarios.php";
+                    }
+                });
+            </script>';
+            }
+
+        } catch (PDOExeption $e) {
+            echo $e->getMessage();
+        }
+        }
 
     if ($action == '3' && isset($_GET['id'])) {
         $id = $_GET['id'];
     
-    
-            if($id != 1){
-    
+        if ($id != 1) {
+            try {
                 $sql_delete = "DELETE FROM usuarios WHERE id='$id'";
-    
-            if($conexion->query($sql_delete)){
-    
-                print "<script>
-            
+                if ($conexion->query($sql_delete)) {
+                    print '<script>
+                    Swal.fire({
+                        title: "Usuario Eliminado",
+                        text: "Usuario ' . $id . ' Eliminado correctamente",
+                        icon: "success",
+                        allowOutsideClick: false,
+                        showCancelButton: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                        confirmButtonText: "OK"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "usuarios.php";
+                        }
+                    });
+                </script>';
+                } else {
+                    print "<script>
+                    Swal.fire(
+                        'Error!',
+                        'Ocurrió un error.',
+                        'error'
+                    )
+                    </script>";
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == "23000" && strpos($e->getMessage(), "FOREIGN KEY") !== false) {
+                    print "<script>
                 Swal.fire(
-                'Eliminado!',
-                'Eliminado Correctamente',
-                'success'
+                    'Error',
+                    'Usuario encargado de una actividad, no se puede eliminar.',
+                    'error'
                 )
-    
                 </script>";
-                    
-            }else{
-    
-                print "<script>
-            
+                } else {
+                    print "<script>
                 Swal.fire(
-                'Error!',
-                'Ocurrio un error.',
-                'error'
+                    'Error!',
+                    'Ocurrió un error: " . $e->getMessage() . "',
+                    'error'
                 )
-    
                 </script>";
-            
+                }
+                
+                
             }
-    
-            }
-    
-            print '<script>
-                setTimeout(() => {
-                    window.history.replaceState(null, null, window.location.pathname);
-                }, 0);
-            </script>';
             
         }
+       print" <script>
+            setTimeout(() => {
+                window.history.replaceState(null, null, window.location.pathname);
+            }, 0);
+            </script>";
+    }
+    
     
 
     if($action == '2' && isset($_GET['id'])){
@@ -145,7 +193,8 @@ if(isset($_GET['opcion'])){
     
 
     if($action == '1'){
-        // Realiza la consulta a la base de datos para obtener los roles
+        if ($_SESSION['tipo_usuario']==7) {
+           // Realiza la consulta a la base de datos para obtener los roles
         $query = "SELECT * FROM roles";
         $stmt = $conexion->prepare($query);
         $stmt->execute();
@@ -211,31 +260,96 @@ if(isset($_GET['opcion'])){
 
         <?php
     }
+    if ($_SESSION['tipo_usuario']==1) {
+        // Realiza la consulta a la base de datos para obtener los roles
+        $query = "SELECT * FROM `roles` WHERE rol <> 'Administrador' AND rol <> 'SuperUsuario'";
+        $stmt = $conexion->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Genera las opciones para el campo de selección
+        $options = '';
+        foreach ($result as $row) {
+            $options .= '<option value="' . $row['id'] . '">' . $row['rol'] . '</option>';
+        }
+        ?>
+
+        <script>
+            Swal.fire({
+                title: 'Registrar Usuario',
+                html: `
+                    <form action="#" method="POST" class="text-left m-3">
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Escriba aquí el nombre del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido">Apellido</label>
+                            <input type="text" name="apellido" id="apellido" class="form-control" placeholder="Escriba aquí el apellido del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Correo</label>
+                            <input type="email" name="email" id="email" class="form-control" placeholder="Escriba aquí el correo del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Escriba aquí el teléfono del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="documento">Número de documento</label>
+                            <input type="number" name="documento" id="documento" class="form-control" placeholder="Escriba aquí el documento del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña (puede ser el mismo documento)</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Escriba aquí la contraseña del usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password2">Repita la contraseña</label>
+                            <input type="password" name="password2" id="password2" class="form-control" placeholder="Repetir contraseña" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_usuario">Tipo de Usuario</label>
+                            <select name="tipo_usuario" id="tipo_usuario" class="form-control">
+                                <?php echo $options; ?>
+                            </select>
+                        </div>
+                        <input type="submit" name="btnRegistrar" class="btn btn-outline-secondary btn-lg btn-block mt-4">
+                    </form>
+                `,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                showCancelButton: false,
+                showCloseButton: true,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+            });
+        </script>
+
+        <?php
+    }
+    }
 }
 
+        
 /* Enviar formulario de registro */
 
-if(isset($_POST['btnRegistrar'])){
+if (isset($_POST['btnRegistrar'])) {
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $email = $_POST['email'];
+    $telefono = $_POST['telefono']; // Nuevo campo 'telefono'
+    $documento = $_POST['documento'];
+    $p1 = $_POST['password'];
+    $p2 = $_POST['password2'];
+    $tipo_usuario = $_POST['tipo_usuario'];
+    $usuario = $email; // Nuevo campo 'usuario', se asigna el valor de 'email'
 
-    try {
-        
-        $nombre = $_POST['nombre'];
-        $apellido = $_POST['apellido'];
-        $email = $_POST['email'];
-        $telefono = $_POST['telefono']; // Nuevo campo 'telefono'
-        $documento = $_POST['documento'];
-        $p1 = $_POST['password'];
-        $p2 = $_POST['password2'];
-        $tipo_usuario = $_POST['tipo_usuario'];
-        $usuario = $email; // Nuevo campo 'usuario', se asigna el valor de 'email'
+    if ($p1 == $p2) {
+        $hashed_password = password_hash($p1, PASSWORD_DEFAULT);
 
-        if($p1 == $p2){
+        $insert_usuario = "INSERT INTO `usuarios`(`nombre`, `apellido`, `email`, `telefono`, `documento`, `pass`, `tipo_usuario`, `usuario`, `fecha_sys`) VALUES (:nombre, :apellido, :email, :telefono, :documento, :pass, :tipo_usuario, :usuario, now())";
 
-            $hashed_password = password_hash($p1, PASSWORD_DEFAULT);
-            
-
-            $insert_usuario = "INSERT INTO `usuarios`(`nombre`, `apellido`, `email`, `telefono`, `documento`, `pass`, `tipo_usuario`, `usuario`, `fecha_sys`) VALUES (:nombre, :apellido, :email, :telefono, :documento, :pass, :tipo_usuario, :usuario, now())";
-
+        try {
             $stmt = $conexion->prepare($insert_usuario);
 
             $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
@@ -247,43 +361,42 @@ if(isset($_POST['btnRegistrar'])){
             $stmt->bindParam(':tipo_usuario', $tipo_usuario, PDO::PARAM_INT);
             $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR); // Nuevo campo 'usuario'
 
-            if($stmt->execute()){
+            if ($stmt->execute()) {
                 print "<script>
-            
-                Swal.fire(
-                'Registrado!',
-                'Registrado Correctamente',
-                'success'
-                )
-            
+                    Swal.fire(
+                    'Registrado!',
+                    'Registrado Correctamente',
+                    'success'
+                    )
                 </script>";
             }
-
-        }else{
-
-            print "<script>
-            
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000 && strpos($e->getMessage(), "Duplicate entry") !== false) {
+                print "<script>
                 Swal.fire(
-                'Error!',
-                'Las contraseñas no coinciden.',
-                'error'
+                    'Error!',
+                    'Este usuario ya esta registrado en nuestro sistema. Verifica el correo o numero de documento',
+                    'error'
                 )
-            
                 </script>";
-
+            } else {
+                print "<script>
+                Swal.fire(
+                    'Error!',
+                    'Ocurrió un error: " . $e->getMessage() . "',
+                    'error'
+                )
+                </script>";
+            }
         }
-
-    } catch (PDOException $e) {
-
+    } else {
         print "<script>
-            
-                Swal.fire(
-                'Error!',
-                'Ocurrió un error.',
-                'error'
-                )
-            
-                </script>";
+            Swal.fire(
+            'Error!',
+            'Las contraseñas no coinciden.',
+            'error'
+            )
+        </script>";
     }
 
     print '<script>
@@ -291,9 +404,8 @@ if(isset($_POST['btnRegistrar'])){
         window.history.replaceState(null, null, window.location.pathname);
     }, 0);
     </script>';
-
-
 }
+
 
 /* Actualizar formulario de editar */
 

@@ -1,9 +1,21 @@
-<?php require_once "vistas/parte_superior.php"?>
+<?php
+// Iniciar la sesión (si aún no está iniciada)
+session_start();
 
-<script src="jquery/jquery-3.3.1.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="js/scripts.js"></script>
+// Verificar si la sesión contiene la información del rol del usuario
+if (isset($_SESSION['tipo_usuario'])) {
+    $rolUsuario = $_SESSION['tipo_usuario'];
+
+    // Verificar si el usuario tiene el rol adecuado
+    $rolesPermitidos = [1, 7]; // Administrador y Superusuario
+
+    if (in_array($rolUsuario, $rolesPermitidos)) {
+        // El usuario tiene permiso, mostrar el contenido del módulo
+        require_once "vistas/parte_superior.php";
+        
+        ?>
+
+
 
 <div id="layoutSidenav_content">
     <main>
@@ -50,7 +62,7 @@
                                 <button id="verSubprocesosBtn" class="btn btn-outline-light custom-btn" onclick="window.location.href = 'subprocesos.php';">Ver Subprocesos</button>
                             </div>
                             <div class="text-center mb-3">
-                                <button id="verSubprocesosNivel2Btn" class="btn btn-outline-light custom-btn" onclick="window.location.href = 'subprocesosnvl2.php';">Ver Subprocesos Nivel 2</button>
+                                <button id="verSubprocesosNivel2Btn" class="btn btn-outline-light custom-btn" onclick="window.location.href = 'subprocesos_nvl2.php';">Ver Subprocesos Nivel 2</button>
                             </div>
                             <div class="text-center mb-3">
                                 <button id="verActividadesBtn" class="btn btn-outline-light custom-btn" onclick="window.location.href = 'actividades.php';">Ver Actividades</button>
@@ -541,6 +553,21 @@ $("#crearActividadBtn").click(function() {
 
 </script>
 
+<script src="jquery/jquery-3.3.1.min.js"></script>
+<script src="popper/popper.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Código custom -->
+<script src="js/scripts.js"></script>
 </body>
 </html>
+<?php
+    } else {
+        header("Location: 401.html");
+    }
+} else {
+    // La sesión no contiene la información del rol, redirigir o mostrar un mensaje de error
+    header("Location: 401.html");
+}
 
+?>

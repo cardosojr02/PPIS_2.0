@@ -1,6 +1,17 @@
+document.onreadystatechange = function () {
+  if (document.readyState === "complete") {
+    // La página está completamente cargada, oculta el loader
+    hideLoader();
+  }
+};
 
-    
-    (function($) {
+function hideLoader() {
+  // Oculta el loader después de un tiempo de espera (puedes ajustar el tiempo según tus necesidades)
+  setTimeout(function () {
+    document.querySelector('.loader-wrapper').style.display = 'none';
+  }, 1000); // 1000 milisegundos = 1 segundo
+}
+(function($) {
     "use strict";
 
     // Add active state to sidbar nav links
@@ -18,7 +29,4 @@
     });
 })(jQuery);
 
-
   
-  
-
