@@ -16,12 +16,12 @@ try {
     $stmt->bindParam(':id_subproceso', $subprocesoPadre);
     $stmt->execute();
 
-    // Devolver una respuesta indicando que el subproceso de nivel 2 se ha guardado correctamente
-    $response = array('message' => 'Subproceso nivel 2 guardado correctamente');
-    echo json_encode($response);
-} catch (PDOException $e) {
-    // Devolver una respuesta indicando que ha ocurrido un error al guardar el subproceso de nivel 2
-    $response = array('message' => 'Error al guardar el subproceso nivel 2: ' . $e->getMessage());
-    echo json_encode($response);
-}
-?>
+     // Devolver una respuesta indicando que el proceso se ha guardado correctamente
+     $response = array('success' => true, 'message' => 'Subproceso nivel 2 guardado correctamente');
+     echo json_encode($response);
+ } catch(PDOException $e) {
+     // Devolver una respuesta indicando que ha ocurrido un error al guardar el proceso
+     $response = array('success' => false, 'message' => 'Error al guardar el Subproceso nivel 2: ' . $e->getMessage());
+     echo json_encode($response);
+ }
+ ?>

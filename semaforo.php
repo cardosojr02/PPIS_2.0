@@ -2,7 +2,8 @@
  require_once "vistas/parte_superior.php"; 
 
 
-$rolUsuario = $_SESSION['tipo_usuario'] ?? 0;
+ $rolUsuario = isset($_SESSION['tipo_usuario']) ? $_SESSION['tipo_usuario'] : 0;
+
 
 // Definir las consultas SQL basadas en el rol del usuario
 if ($rolUsuario == 1 || $rolUsuario == 7) {
@@ -81,11 +82,19 @@ $contarVencidas = $stmtVencidas->rowCount();
     <div id="layoutSidenav_content">
         <div class="container-fluid">
             <h1 class="mt-4">Semáforo</h1>
+            <?php if ($_SESSION['tipo_usuario'] == 1 || $_SESSION['tipo_usuario'] == 7) { ?>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="principal.php">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="configuracion.php">Configuración</a></li>
                 <li class="breadcrumb-item active">Semáforo</li>
             </ol>
+        <?php } else { ?>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="principal.php">Dashboard</a></li>
+                <li class="breadcrumb-item active">Semáforo</li>
+            </ol>
+        <?php } ?>
+            
 
             <div class="card mb-4">
                 <div class="card-body">

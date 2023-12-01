@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2023 a las 16:35:52
+-- Tiempo de generación: 25-11-2023 a las 01:50:28
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.0.28
 
@@ -83,7 +83,9 @@ CREATE TABLE `avances` (
 
 INSERT INTO `avances` (`id`, `id_actividades_usuarios`, `nombre_avance`, `texto_avance`, `archivo_avance`, `fecha_registro`) VALUES
 (13, 9, 'asd', 'asd', 'archivos_avances/index.php', '2023-11-14 22:28:11'),
-(14, 9, 'xxxxxxx', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'archivos_avances/pendientes proy.txt', '2023-11-14 22:28:46');
+(14, 9, 'xxxxxxx', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'archivos_avances/pendientes proy.txt', '2023-11-14 22:28:46'),
+(15, 9, 'asd', 'asd', NULL, '2023-11-21 05:32:29'),
+(16, 9, 'xxxxxxx', 'asd', NULL, '2023-11-21 05:52:40');
 
 -- --------------------------------------------------------
 
@@ -259,6 +261,7 @@ ALTER TABLE `actividades`
 --
 ALTER TABLE `actividades_usuarios`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id_usuario_2` (`id_usuario`),
   ADD KEY `id_actividad` (`id_actividad`),
   ADD KEY `id_usuario` (`id_usuario`);
 
@@ -325,13 +328,13 @@ ALTER TABLE `actividades`
 -- AUTO_INCREMENT de la tabla `actividades_usuarios`
 --
 ALTER TABLE `actividades_usuarios`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `avances`
 --
 ALTER TABLE `avances`
-  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `periodos`

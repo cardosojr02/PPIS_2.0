@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="public/css/login.css">
 
     <title>PPIS 2.0</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/2.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/2.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/2.png">
 
   </head>
 

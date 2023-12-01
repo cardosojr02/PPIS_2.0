@@ -18,12 +18,12 @@ try {
     $stmt->bindParam(':id_proceso', $idProcesoPadre);
     $stmt->execute();
 
-    // Devolver una respuesta indicando que el subproceso se ha guardado correctamente
-    $response = array('message' => 'Subproceso guardado correctamente');
+    // Devolver una respuesta indicando que el proceso se ha guardado correctamente
+    $response = array('success' => true, 'message' => 'Subproceso guardado correctamente');
     echo json_encode($response);
-} catch (PDOException $e) {
-    // Devolver una respuesta indicando que ha ocurrido un error al guardar el subproceso
-    $response = array('message' => 'Error al guardar el subproceso: ' . $e->getMessage());
+} catch(PDOException $e) {
+    // Devolver una respuesta indicando que ha ocurrido un error al guardar el proceso
+    $response = array('success' => false, 'message' => 'Error al guardar el Subproceso: ' . $e->getMessage());
     echo json_encode($response);
 }
 ?>

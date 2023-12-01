@@ -1,7 +1,21 @@
-<?php require_once "vistas/parte_superior.php";
-require_once "conexion.php";
-include "controladores/controlador_usuarios.php";
+<?php
+// Iniciar la sesión (si aún no está iniciada)
+session_start();
+
+// Verificar si la sesión contiene la información del rol del usuario
+if (isset($_SESSION['tipo_usuario'])) {
+    $rolUsuario = $_SESSION['tipo_usuario'];
+
+    // Verificar si el usuario tiene el rol adecuado
+    $rolesPermitidos = [1, 7]; // Administrador y Superusuario
+
+    if (in_array($rolUsuario, $rolesPermitidos)) {
+        // El usuario tiene permiso, mostrar el contenido del módulo
+        require_once "vistas/parte_superior.php";
+        require_once "conexion.php";
+        include "controladores/controlador_usuarios.php";
 ?>
+
 
 <main>
     <div id="layoutSidenav_content">
@@ -27,10 +41,10 @@ include "controladores/controlador_usuarios.php";
                     <div class="card-body">
                         
                         <div class="text-right">
-                            <a href='?opcion=1'><button class="btn btn-infox mb-2" title="Nuevo"><i class="fas fa-plus-circle fa-2x"></i></button></a>
+                            <a href='?opcion=1'><button class="btn btn-info mb-2" title="Nuevo"><i class="fas fa-plus-circle fa-2x"></i></button></a>
                         </div>
                         <div class="table-responsive">
-                            <table id="usuarios" class="table-bordered table-hover" width="80%" cellspacing="0">
+                            <table id="usuarios" class="table-bordered table-hover" width="100%" cellspacing="0">
                                 <thead>
                                     <tr class="bg-info text-light">
                                         <th>ID</th>
@@ -133,3 +147,15 @@ var table = new DataTable('#usuarios', {
 });
 </script>
 </html>
+<?php
+    } else {
+        header("Location: 401.html");
+    }
+} else {
+    // La sesión no contiene la información del rol, redirigir o mostrar un mensaje de error
+    header("Location: 401.html");
+}
+
+
+
+?>

@@ -3,7 +3,7 @@
     class Conexion{
         public static function Conectar(){
             define('servidor', 'localhost');
-            define('nombre_bd', 'proyecto_ppis');
+            define('nombre_bd', 'proyecto2');
             define('usuario', 'root');
             define('password', '');	
             $opciones = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');			

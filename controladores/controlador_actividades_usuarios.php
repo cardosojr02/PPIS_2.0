@@ -106,7 +106,6 @@ if (isset($_GET['opcion'])) {
             $id = $actividad['id'];
             $nombre = $actividad['nombre'];
             $descripcion = $actividad['descripcion']; // Agregado
-            $docentes_responsables = $actividad['docentes_responsables']; // Agregado
             $presupuesto_proyectado = $actividad['presupuesto_proyectado']; // Agregado
             $fecha_inicio = $actividad['fecha_inicio']; // Agregado
             $fecha_fin = $actividad['fecha_fin']; // Agregado
@@ -126,24 +125,6 @@ if (isset($_GET['opcion'])) {
                             <div class="form-group">
                                 <label for="descripcion">Descripción</label>
                                 <textarea name="descripcion" class="form-control" rows="4" required><?php echo $descripcion ?></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="docentes_responsables">Docentes Responsables</label>
-                                <select name="docentes_responsables" class="form-control">
-                                    <?php
-                                    // Obten la lista de usuarios de tu base de datos
-                                    $sql_usuarios = "SELECT id, nombre FROM usuarios";
-                                    $stmt_usuarios = $conexion->prepare($sql_usuarios);
-                                    $stmt_usuarios->execute();
-                                    $usuarios = $stmt_usuarios->fetchAll(PDO::FETCH_ASSOC);
-    
-                                    // Muestra opciones para cada usuario
-                                    foreach ($usuarios as $usuario) {
-                                        $selected = ($usuario['id'] == $docentes_responsables) ? 'selected' : '';
-                                        echo '<option value="' . $usuario['id'] . '" ' . $selected . '>' . $usuario['nombre'] . '</option>';
-                                    }
-                                    ?>
-                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="presupuesto_proyectado">Presupuesto</label>
@@ -198,7 +179,7 @@ if (isset($_GET['opcion'])) {
     }
     
     }
-    if ($action == '1') {
+    if ($action == '8') {
         
     
         ?>
@@ -249,7 +230,7 @@ if (isset($_GET['opcion'])) {
 
 /* Enviar formulario de registro */
 
-if (isset($_POST['btnRegistrar'])) {
+if (isset($_POST['btnRegistrarUser'])) {
     $userId = $_POST['userId'];
     $actividadId = $_POST['actividadId'];
     
@@ -316,7 +297,6 @@ if (isset($_POST['btnActualizar'])) {
     $id = $_POST['id'];
     $nombre = $_POST['nombre'];
     $descripcion = $_POST['descripcion'];
-    $docentes_responsables = $_POST['docentes_responsables'];
     $presupuesto_proyectado = $_POST['presupuesto_proyectado'];
     $fecha_inicio = $_POST['fecha_inicio'];
     $fecha_fin = $_POST['fecha_fin'];
@@ -327,7 +307,6 @@ if (isset($_POST['btnActualizar'])) {
     $update_actividad = "UPDATE actividades 
                      SET nombre = :nombre, 
                          descripcion = :descripcion,
-                         docentes_responsables = :docentes_responsables,
                          presupuesto_proyectado = :presupuesto_proyectado,
                          fecha_inicio = :fecha_inicio,
                          fecha_fin = :fecha_fin,
@@ -341,7 +320,6 @@ if (isset($_POST['btnActualizar'])) {
 
         $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $stmt->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
-        $stmt->bindParam(':docentes_responsables', $docentes_responsables, PDO::PARAM_INT);
         $stmt->bindParam(':presupuesto_proyectado', $presupuesto_proyectado, PDO::PARAM_INT);
         $stmt->bindParam(':fecha_inicio', $fecha_inicio, PDO::PARAM_STR);
         $stmt->bindParam(':fecha_fin', $fecha_fin, PDO::PARAM_STR);
@@ -373,7 +351,7 @@ if (isset($_POST['btnActualizar'])) {
                     },
                     onClose: () => {
                         clearInterval(timerInterval);
-                        window.location.href = 'actividades.php';
+                        window.location.href = 'detalle_actividad.php?id=$id_actividad';
                     }
                 });
             </script>";
@@ -389,7 +367,7 @@ if (isset($_POST['btnActualizar'])) {
     }
     echo "<script>
         setTimeout(function() {
-            window.location.href = 'actividades.php';
+            window.location.href = 'detalle_actividad.php?id=$id_actividad';
         }, 3000);
     </script>";
 }

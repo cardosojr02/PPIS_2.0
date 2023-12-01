@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 // Incluye tu archivo de conexión a la base de datos u otros archivos necesarios
 require_once('./conexion.php');
 
@@ -19,20 +18,20 @@ $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($resultado) {
     $estado = $resultado['estado'];
-    if ($estado!=1) {
-       session_destroy();
-       header("Location: index.php");
+    if ($estado != 1) {
+        session_destroy();
+        echo '<script>window.location.href = "index.php";</script>';
+        exit();
     }
 }
-	if(!isset($_SESSION['id'])){
-		header("Location: index.php");
-	}
-	
-	$nombre = $_SESSION['nombre'];
-    $apellido = $_SESSION['apellido'];
-	$tipo_usuario = $_SESSION['tipo_usuario'];
-	
 
+if (!isset($_SESSION['id'])) {
+    echo '<script>window.location.href = "index.php";</script>';
+    exit();}
+
+    $nombre = $_SESSION['nombre'];
+    $apellido = $_SESSION['apellido'];
+    $tipo_usuario = $_SESSION['tipo_usuario'];
 
 // Recupera el nombre del rol del usuario logeado
 $rolConsulta = "SELECT rol FROM roles WHERE id = :tipo_usuario";
@@ -62,6 +61,7 @@ $rolUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">        
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
         <script src="plugins/sweetalert2/sweetalert2@11.js"></script>
@@ -72,7 +72,10 @@ $rolUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
     </div>
     <body class="sb-nav-fixed sb-sidenav-toggled">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand" href="principal.php">PPIS 2.0</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand" href="principal.php">
+        <img src="./img/2.png" alt="Logo" class="logo-img">PPIS 2.0
+        </a>
+        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <li class="nav-item dropdown">

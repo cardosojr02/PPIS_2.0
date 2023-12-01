@@ -76,37 +76,42 @@ if (isset($_SESSION['tipo_usuario'])) {
 </div>
 
 
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function() {
   // Botón para crear Periodo
-$("#crearPeriodoBtn").click(function() {
-  Swal.fire({
-    title: 'Crear Periodo',
-    html: `
-      <form id="periodoForm">
-        <div class="mb-3">
-          <label for="nombrePeriodo">Nombre del Periodo:</label>
-          <input type="text" class="form-control" id="nombrePeriodo" placeholder="Ingrese el nombre del periodo" required>
-        </div>
-        <div class="mb-3">
-          <label for="fechaInicioPeriodo">Fecha de Inicio:</label>
-          <input type="date" class="form-control" id="fechaInicioPeriodo" required>
-        </div>
-        <div class="mb-3">
-          <label for="fechaFinPeriodo">Fecha de Fin:</label>
-          <input type="date" class="form-control" id="fechaFinPeriodo" required>
-        </div>
-      </form>
-    `,
-    showCancelButton: true,
-    confirmButtonText: 'Crear',
-    cancelButtonText: 'Cancelar',
-    preConfirm: function() {
-      // Obtener los valores del formulario
-      var nombrePeriodo = $("#nombrePeriodo").val();
-      var fechaInicioPeriodo = $("#fechaInicioPeriodo").val();
-      var fechaFinPeriodo = $("#fechaFinPeriodo").val();
+  $("#crearPeriodoBtn").click(function() {
+      Swal.fire({
+        title: 'Crear Periodo',
+        html: `
+          <form id="periodoForm">
+            <div class="mb-3">
+              <label for="nombrePeriodo">Nombre del Periodo:</label>
+              <input type="text" class="form-control" id="nombrePeriodo" placeholder="Ingrese el nombre del periodo" required>
+            </div>
+            <div class="mb-3">
+              <label for="fechaInicioPeriodo">Fecha de Inicio:</label>
+              <input type="date" class="form-control" id="fechaInicioPeriodo" required>
+            </div>
+            <div class="mb-3">
+              <label for="fechaFinPeriodo">Fecha de Fin:</label>
+              <input type="date" class="form-control" id="fechaFinPeriodo" required>
+            </div>
+          </form>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Crear',
+        cancelButtonText: 'Cancelar',
+        preConfirm: function() {
+          var nombrePeriodo = $("#nombrePeriodo").val();
+          var fechaInicioPeriodo = $("#fechaInicioPeriodo").val();
+          var fechaFinPeriodo = $("#fechaFinPeriodo").val();
+
+          // Verificar si la fecha de fin es anterior a la fecha de inicio
+          if (new Date(fechaFinPeriodo) < new Date(fechaInicioPeriodo)) {
+            Swal.showValidationMessage('La fecha de fin no puede ser anterior a la fecha de inicio');
+            return false;
+          }
 
        // Validar los campos del formulario
        if (!nombrePeriodo || !fechaInicioPeriodo || !fechaFinPeriodo) {
@@ -223,16 +228,34 @@ $("#crearPeriodoBtn").click(function() {
               periodoProceso: periodoProceso
             },
             success: function(response) {
-              var jsonResponse = JSON.parse(response);
-              console.log(jsonResponse);
-              console.log("Success: " + jsonResponse.success);
-              console.log("Message: " + jsonResponse.message);
-              if (jsonResponse.success) {
-                Swal.fire('Éxito', jsonResponse.message, 'success');
-              } else {
-                Swal.fire('Error', jsonResponse.message, 'error');
+            var jsonResponse = JSON.parse(response);
+            console.log(jsonResponse);
+            console.log("Success: " + jsonResponse.success);
+            console.log("Message: " + jsonResponse.message);
+            if (jsonResponse.success) {
+            Swal.fire({
+              title: 'Éxito',
+              text: jsonResponse.message,
+              icon: 'success',
+              timer: 2000, // Tiempo en milisegundos
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                Swal.update({
+                  title: 'Redireccionando...',
+                  text: 'Serás redirigido al CRUD en 2 segundos.', // Mensaje adicional
+                })
+              },
+              willClose: () => {
+                // Redirigir a la página de CRUD después de crear un proceso
+                window.location.href = 'procesos.php'; // Reemplaza con la ruta correcta
               }
-            },
+            });
+              
+            } else {
+              Swal.fire('Error', jsonResponse.message, 'error');
+            }
+          },
             error: function(xhr, status, error) {
               // Manejar los errores de la petición AJAX
               console.log("Error en la petición AJAX: " + error);
@@ -307,11 +330,35 @@ $("#crearSubprocesoBtn").click(function() {
               descripcionSubproceso: descripcionSubproceso,
               procesoPrincipal: procesoPrincipal
             },
-            success: function(response) { 
-              // Manejar la respuesta del servidor
-              console.log(response);
-              Swal.fire('Éxito', 'El subproceso se ha creado correctamente', 'success');
-            },
+            success: function(response) {
+            var jsonResponse = JSON.parse(response);
+            console.log(jsonResponse);
+            console.log("Success: " + jsonResponse.success);
+            console.log("Message: " + jsonResponse.message);
+            if (jsonResponse.success) {
+            Swal.fire({
+              title: 'Éxito',
+              text: jsonResponse.message,
+              icon: 'success',
+              timer: 2000, // Tiempo en milisegundos
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                Swal.update({
+                  title: 'Redireccionando...',
+                  text: 'Serás redirigido al CRUD en 2 segundos.', // Mensaje adicional
+                })
+              },
+              willClose: () => {
+                // Redirigir a la página de CRUD después de crear un proceso
+                window.location.href = 'subprocesos.php'; // Reemplaza con la ruta correcta
+              }
+            });
+              
+            } else {
+              Swal.fire('Error', jsonResponse.message, 'error');
+            }
+          },
             error: function(xhr, status, error) {
               // Manejar los errores de la petición AJAX
               console.log("Error en la petición AJAX: " + error);
@@ -373,11 +420,7 @@ $("#crearSubprocesoNivel2Btn").click(function() {
             Swal.showValidationMessage('Por favor, complete todos los campos');
             return false;
             }
-            
-           
-            
-
-
+  
           // Llamada AJAX para guardar el subproceso nivel 2 en el backend
           $.ajax({
             url: 'procesos/guardar_subproceso_nivel2.php', // Ruta al archivo PHP que procesa la creación del subproceso nivel 2
@@ -387,10 +430,34 @@ $("#crearSubprocesoNivel2Btn").click(function() {
               subprocesoPadre: subprocesoPadre
             },
             success: function(response) {
-              // Manejar la respuesta del servidor
-              console.log(response);
-              Swal.fire('Éxito', 'El subproceso nivel 2 se ha creado correctamente', 'success');
-            },
+            var jsonResponse = JSON.parse(response);
+            console.log(jsonResponse);
+            console.log("Success: " + jsonResponse.success);
+            console.log("Message: " + jsonResponse.message);
+            if (jsonResponse.success) {
+            Swal.fire({
+              title: 'Éxito',
+              text: jsonResponse.message,
+              icon: 'success',
+              timer: 2000, // Tiempo en milisegundos
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                Swal.update({
+                  title: 'Redireccionando...',
+                  text: 'Serás redirigido al CRUD en 2 segundos.', // Mensaje adicional
+                })
+              },
+              willClose: () => {
+                // Redirigir a la página de CRUD después de crear un proceso
+                window.location.href = 'subprocesos_nvl2.php'; // Reemplaza con la ruta correcta
+              }
+            });
+              
+            } else {
+              Swal.fire('Error', jsonResponse.message, 'error');
+            }
+          },
             error: function(xhr, status, error) {
               // Manejar los errores de la petición AJAX
               console.log("Error en la petición AJAX: " + error);
@@ -450,12 +517,9 @@ $("#crearActividadBtn").click(function() {
                   <textarea class="form-control" id="descripcionActividad" name="descripcionActividad" rows="3" placeholder="Ingrese la descripción de la actividad"></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="docentesResponsables">Docentes Responsables:</label>
-                  <select class="form-control" id="docentesResponsables" name="docentesResponsables">
-                    <option value="">Seleccionar docente responsable</option>
-                    ${selectOptionsUsuarios}
-                  </select>
-                </div>
+                  <label for="observacionesActividad">Observaciones de la Actividad:</label>
+                  <textarea class="form-control" id="observacionesActividad" name="observacionesActividad" rows="3" placeholder="Ingrese observaciones de la actividad"></textarea>
+                </div>              
                 <div class="mb-3">
                   <label for="presupuestoActividad">Presupuesto de la Actividad:</label>
                   <input type="text" class="form-control" id="presupuestoActividad" name="presupuestoActividad" placeholder="Ingrese el presupuesto de la actividad">
@@ -469,20 +533,33 @@ $("#crearActividadBtn").click(function() {
                   <input type="date" class="form-control" id="fechaFinActividad" name="fechaFinActividad">
                 </div>
                 <div class="mb-3">
-                  <label for="estadoActividad">Estado de la Actividad:</label>
-                  <select class="form-control" id="estadoActividad" name="estadoActividad">
-                    <option value="">Seleccionar estado de la actividad</option>
+                  <label for="progresoActividad">Progreso de la Actividad:</label>
+                  <select class="form-control" id="progresoActividad" name="progresoActividad">
                     <option value="Pendiente">Pendiente</option>
                     <option value="En Progreso">En Progreso</option>
                     <option value="Completada">Completada</option>
                   </select>
                 </div>
                 <div class="mb-3">
-                  <label for="subprocesoNivel2">Subproceso Nivel 2:</label>
+                  <label for="subprocesoNivel2">Subproceso Nivel 2 Asociado:</label>
                   <select class="form-control" id="subprocesoNivel2" name="subprocesoNivel2">
                     <option value="">Seleccionar subproceso nivel 2</option>
                     ${selectOptions}
                   </select>
+                </div>
+                <div class="mb-3">
+                  <label for="docentesResponsables">Docentes Responsables:</label>
+                  <select class="form-control" id="docentesResponsables" name="docentesResponsables">
+                    <option value="">Seleccionar docentes responsables</option>
+                    ${selectOptionsUsuarios}
+                  </select>
+                </div>
+                <div class="mb-3">
+                    <label for="estadoActividad">Estado de la Actividad:</label>
+                    <select class="form-control" id="estadoActividad" name="estadoActividad">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
                 </div>
               </form>
             `,
@@ -492,15 +569,23 @@ $("#crearActividadBtn").click(function() {
             preConfirm: function() {
               var nombreActividad = $("#nombreActividad").val();
               var descripcionActividad = $("#descripcionActividad").val();
+              var observacionesActividad = $("#observacionesActividad").val();
               var docentesResponsables = $("#docentesResponsables").val();
               var presupuestoActividad = $("#presupuestoActividad").val();
               var fechaInicioActividad = $("#fechaInicioActividad").val();
               var fechaFinActividad = $("#fechaFinActividad").val();
               var estadoActividad = $("#estadoActividad").val();
               var subprocesoNivel2 = $("#subprocesoNivel2").val();
+              var progresoActividad = $("#progresoActividad").val();
+
+              // Verificar si la fecha de fin es anterior a la fecha de inicio
+          if (new Date(fechaFinActividad) < new Date(fechaInicioActividad)) {
+            Swal.showValidationMessage('La fecha de fin no puede ser anterior a la fecha de inicio');
+            return false;
+          }
 
               //Verificar que los campos no estén vacios
-              if (nombreActividad == '' || descripcionActividad == '' || docentesResponsables == '' || presupuestoActividad == '' || fechaInicioActividad == '' || fechaFinActividad == '' || estadoActividad == '') {
+              if (nombreActividad == '' || descripcionActividad == '' ||  presupuestoActividad == '' || fechaInicioActividad == '' || fechaFinActividad == '' || estadoActividad == '') {
                 Swal.showValidationMessage('Por favor, complete todos los campos');
                 return false;
                 }
@@ -512,18 +597,45 @@ $("#crearActividadBtn").click(function() {
                 data: {
                   nombreActividad: nombreActividad,
                   descripcionActividad: descripcionActividad,
-                  docentesResponsables: docentesResponsables,
+                  observacionesActividad: observacionesActividad,
+                  docentes_responsables: docentesResponsables,
                   presupuestoActividad: presupuestoActividad,
                   fechaInicioActividad: fechaInicioActividad,
                   fechaFinActividad: fechaFinActividad,
                   estadoActividad: estadoActividad,
-                  subprocesoNivel2: subprocesoNivel2
+                  subprocesoNivel2: subprocesoNivel2,
+                  progresoActividad: progresoActividad
+                  
                 },
                 success: function(response) {
-                  // Manejar la respuesta del servidor
                   console.log(response);
-                  Swal.fire('Éxito', 'La actividad se ha creado correctamente', 'success');
-                },
+                  console.log("Success: " + response.success);
+                  console.log("Message: " + response.message);
+          
+          if (response.success) {
+            Swal.fire({
+              title: 'Éxito',
+              text: response.message,
+              icon: 'success',
+              timer: 2000, // Tiempo en milisegundos
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading();
+                Swal.update({
+                  title: 'Redireccionando...',
+                  text: 'Serás redirigido al CRUD en 2 segundos.', // Mensaje adicional
+                })
+              },
+              willClose: () => {
+                // Redirigir a la página de CRUD después de crear un proceso
+                window.location.href = 'actividades.php'; // Reemplaza con la ruta correcta
+              }
+            });
+              
+            } else {
+              Swal.fire('Error', response.message, 'error');
+            }
+          },
                 error: function(xhr, status, error) {
                   // Manejar los errores de la petición AJAX
                   console.log("Error en la petición AJAX: " + error);
@@ -553,9 +665,11 @@ $("#crearActividadBtn").click(function() {
 
 </script>
 
+
 <script src="jquery/jquery-3.3.1.min.js"></script>
 <script src="popper/popper.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js"></script>      
 
 <!-- Código custom -->
 <script src="js/scripts.js"></script>

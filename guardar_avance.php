@@ -1,10 +1,14 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require_once "conexion.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_avance = $_POST["nombre_avance"]; // Nuevo campo: Nombre del Avance
     $texto_avance = $_POST["texto_avance"];
     $id_actividad = $_POST["id_actividad"];
+    $id_usuario_creador = $_SESSION['id'];
 
     // Verifica si se adjuntó un archivo
     $archivo_avance = null;
@@ -20,13 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conexion = Conexion::Conectar();
 
     // Inserta el avance en la base de datos
-    $query = "INSERT INTO avances (id_actividades_usuarios, nombre_avance, texto_avance, archivo_avance) VALUES (:id_actividad, :nombre_avance, :texto_avance, :archivo_avance)";
+    $query = "INSERT INTO avances (id_actividades_usuarios, nombre_avance, texto_avance, archivo_avance, creador) VALUES (:id_actividad, :nombre_avance, :texto_avance, :archivo_avance, :id_usuario_creador)";
     $stmt = $conexion->prepare($query);
     
     $stmt->bindParam(":id_actividad", $id_actividad, PDO::PARAM_INT);
-    $stmt->bindParam(":nombre_avance", $nombre_avance, PDO::PARAM_STR); // Nuevo campo: Nombre del Avance
+    $stmt->bindParam(":nombre_avance", $nombre_avance, PDO::PARAM_STR);
     $stmt->bindParam(":texto_avance", $texto_avance, PDO::PARAM_STR);
     $stmt->bindParam(":archivo_avance", $archivo_avance, PDO::PARAM_STR);
+    $stmt->bindParam(":id_usuario_creador", $id_usuario_creador, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
         // Avance guardado exitosamente

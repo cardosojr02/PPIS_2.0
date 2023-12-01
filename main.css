@@ -17,6 +17,13 @@ body{
     margin: 0;
     font-family: 'Arial', sans-serif;
   }
+
+  .navbar-brand img {
+        max-width: 20%;
+        height: 20%;
+        margin-right: 10px; /* Esto agrega un espacio entre la imagen y el texto */
+    }
+
   
   .loader-wrapper {
     position: fixed;

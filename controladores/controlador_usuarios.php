@@ -337,7 +337,7 @@ if (isset($_POST['btnRegistrar'])) {
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $email = $_POST['email'];
-    $telefono = $_POST['telefono']; // Nuevo campo 'telefono'
+    $telefono = $_POST['telefono']; 
     $documento = $_POST['documento'];
     $p1 = $_POST['password'];
     $p2 = $_POST['password2'];
@@ -355,11 +355,11 @@ if (isset($_POST['btnRegistrar'])) {
             $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
             $stmt->bindParam(':apellido', $apellido, PDO::PARAM_STR);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-            $stmt->bindParam(':telefono', $telefono, PDO::PARAM_STR); // Nuevo campo 'telefono'
+            $stmt->bindParam(':telefono', $telefono, PDO::PARAM_STR); 
             $stmt->bindParam(':documento', $documento, PDO::PARAM_STR);
             $stmt->bindParam(':pass', $hashed_password, PDO::PARAM_STR);
             $stmt->bindParam(':tipo_usuario', $tipo_usuario, PDO::PARAM_INT);
-            $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR); // Nuevo campo 'usuario'
+            $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR); 
 
             if ($stmt->execute()) {
                 print "<script>
@@ -399,11 +399,11 @@ if (isset($_POST['btnRegistrar'])) {
         </script>";
     }
 
-    print '<script>
-    setTimeout(() => {
-        window.history.replaceState(null, null, window.location.pathname);
-    }, 0);
-    </script>';
+    echo "<script>
+        setTimeout(function() {
+            window.location.href = 'usuarios.php';
+        }, 3000);
+    </script>";
 }
 
 
@@ -473,11 +473,11 @@ if(isset($_POST['btnActualizar'])){
                 </script>";
     }
 
-    print '<script>
-    setTimeout(() => {
-        window.history.replaceState(null, null, window.location.pathname);
-    }, 0);
-    </script>';
+    echo "<script>
+        setTimeout(function() {
+            window.location.href = 'usuarios.php';
+        }, 3000);
+    </script>";
 }
 
 function obtenerRolUsuario($id) {

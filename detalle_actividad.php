@@ -6,7 +6,8 @@ require_once "conexion.php";
 
 
 
-
+ // Verificando el tipo de usuario desde la sesión
+ $tiposPermitidos = [1, 7]; // Tipos de usuario permitidos para asignar responsables y editar
 // Obtener los usuarios de la base de datos
 $queryUsuarios = "SELECT id, nombre FROM usuarios"; // Modifica esto para ajustarlo a tu tabla de usuarios
 $stmtUsuarios = $conexion->query($queryUsuarios);
@@ -20,9 +21,12 @@ $actividades = $stmtActividades->fetchAll(PDO::FETCH_ASSOC);
 
 // Función para obtener los detalles de una actividad por su ID
 function obtenerDetalleActividad($id_actividad) {
-    global $conexion; // Asegúrate de tener una conexión a la base de datos
+    global $conexion;
 
-    $query = "SELECT id, id_subproceso_nivel2, nombre, descripcion, observaciones, docentes_responsables, presupuesto_proyectado, fecha_inicio, fecha_fin, estado, progreso, fecha_sys FROM actividades WHERE id = :id_actividad";
+    $query = "SELECT a.id, a.id_subproceso_nivel2, a.nombre, a.descripcion, a.observaciones, a.docentes_responsables, a.presupuesto_proyectado, a.fecha_inicio, a.fecha_fin, a.estado, a.progreso, a.fecha_sys, u.nombre AS nombre_creador
+              FROM actividades a
+              INNER JOIN usuarios u ON a.creador = u.id
+              WHERE a.id = :id_actividad";
 
     $stmt = $conexion->prepare($query);
     $stmt->bindParam(':id_actividad', $id_actividad, PDO::PARAM_INT);
@@ -33,36 +37,44 @@ function obtenerDetalleActividad($id_actividad) {
         if ($detalle_actividad) {
             return $detalle_actividad;
         } else {
-            return null; // No se encontró la actividad
+            echo "<script>alert('Esta actividad no existe, verifique los datos e intente nuevamente.'); window.location.href = 'actividades.php';</script>";
+            exit();
         }
     } else {
         // Manejo de errores
-        return null;
+        echo "<script>alert('Error al buscar la actividad'); window.location.href = 'actividades.php';</script>";
+        exit();
     }
 }
+
 // Función para obtener los avances de una actividad por su ID
 function obtenerAvances($id_actividad) {
     global $conexion;
 
-    $query = "SELECT id, nombre_avance, texto_avance, archivo_avance, fecha_registro FROM avances WHERE id_actividades_usuarios = ? ORDER BY fecha_registro DESC";
-
+    $query = "SELECT a.id, a.nombre_avance, a.texto_avance, a.archivo_avance, a.fecha_registro, u.nombre AS nombre_creador_avance
+              FROM avances a
+              INNER JOIN usuarios u ON a.creador = u.id
+              WHERE a.id_actividades_usuarios = :id_actividad
+              ORDER BY a.fecha_registro DESC";
 
     $stmt = $conexion->prepare($query);
-    $stmt->bindParam(1, $id_actividad, PDO::PARAM_INT);
+    $stmt->bindParam(':id_actividad', $id_actividad, PDO::PARAM_INT);
     $stmt->execute();
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 // Verifica si se proporcionó un ID válido para la actividad
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id_actividad = $_GET['id'];
     $detalle_actividad = obtenerDetalleActividad($id_actividad);
 
-    if (!$detalle_actividad) {
-        // No se encontró la actividad, puedes mostrar un mensaje de error o redireccionar
-        header("Location: actividades.php");
-        exit();
-    }
+   // Verifica si no se proporcionó un ID válido para la actividad
+if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo "<script>alert('ID de actividad no válido'); window.location.href = 'actividades.php';</script>";
+    exit();
+}
+
 
     // Obtener avances de la actividad
     $avances = obtenerAvances($id_actividad);
@@ -71,11 +83,11 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     header("Location: actividades.php");
     exit();
 }
-include "controladores/controlador_actividades_usuarios.php";
+include "controladores/controlador_actividades.php";
 // Realiza una consulta para obtener los detalles de los usuarios asignados a esta actividad desde la tabla actividades_usuarios
-$consulta_usuarios_actividad = "SELECT u.id, u.nombre FROM usuarios u INNER JOIN actividades_usuarios au ON u.id = au.id_usuario WHERE au.id_actividad = id_actividad";
+$consulta_usuarios_actividad = "SELECT u.id, u.nombre FROM usuarios u INNER JOIN actividades_usuarios au ON u.id = au.id_usuario WHERE au.id_actividad = :id_actividad";
 $stmt_usuarios_actividad = $conexion->prepare($consulta_usuarios_actividad);
-
+$stmt_usuarios_actividad->bindParam(':id_actividad', $id_actividad, PDO::PARAM_INT);
 $stmt_usuarios_actividad->execute();
 $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -86,12 +98,20 @@ $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
                 <div class="col-md-12">
                     <!-- Contenido que ocupa todo el ancho -->
                     <h1 class="mt-4">Detalles de la Actividad</h1>
-                    <ol class="breadcrumb mb-4">
+                    <?php if ($_SESSION['tipo_usuario'] == 1 || $_SESSION['tipo_usuario'] == 7) { ?>
+                        <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item"><a href="principal.php">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="configuracion.php">Configuración</a></li>
-                        <li class="breadcrumb-item"><a href="configuracion.php">Actividades</a></li>
+                        <li class="breadcrumb-item"><a href="actividades.php">Actividades</a></li>
                         <li class="breadcrumb-item active">Detalles</li>
                     </ol>
+        <?php } else { ?>
+            <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="principal.php">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Detalles</li>
+                    </ol>
+        <?php } ?>
+                    
                 </div>
             </div>
         <div class="row justify-content-center"> <!-- Centra el contenido -->
@@ -108,7 +128,11 @@ $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="col-md-6 mt-4">
                                     <p><strong>Docentes Responsables:</strong> <?php  echo '<ul>';
                                     foreach ($usuarios_asignados as $usuario) {
-                                        echo '<li>' . $usuario['nombre'] . '<a href="?id='. $detalle_actividad['id']. '&usuario_id='.$usuario['id'].'&opcion=7"><button class="btn btn-danger btn-sm ml-2 mb-2">X</button></a>'.'</li>';
+                                        echo '<li>' . $usuario['nombre'];
+                                        if (in_array($_SESSION['tipo_usuario'], $tiposPermitidos)) {
+                                            echo '<a href="?id='. $detalle_actividad['id']. '&usuario_id='.$usuario['id'].'&opcion=7"><button class="btn btn-danger btn-sm ml-2 mb-2">X</button></a>';
+                                        };
+                                        '</li>';
                                         
                                     }
                                         echo '</ul>'; ?></p>
@@ -127,7 +151,16 @@ $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
                                     </p>
                                     <p><strong>Progreso:</strong> <?php echo $detalle_actividad['progreso']; ?></p>
                                     <p><strong>Fecha de Creación:</strong> <?php echo $detalle_actividad['fecha_sys']; ?></p>
-                                    <a href='?id=<?php echo $detalle_actividad['id']; ?>&opcion=1'><button class="btn btn-primary btn-block mb-3" >Asignar Responsables</button></a>
+                                    <p><strong>Creador:</strong> <?php echo $detalle_actividad['nombre_creador'] ?></p>
+
+                                    <?php
+                                   
+
+                                    if (in_array($_SESSION['tipo_usuario'], $tiposPermitidos)) {
+                                        echo "<a href='?id=" . $detalle_actividad['id'] . "&opcion=8'><button class='btn btn-primary btn-block mb-3'><i class='fas fa-user-plus'></i> Asignar Responsables</button></a>";
+                                        echo "<a href='?id=" . $detalle_actividad['id'] . "&opcion=9'><button class='btn btn-secondary btn-block' title='Editar'><i class='fas fa-pencil-alt'></i> Editar Actividad</button></a>";
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -150,7 +183,7 @@ $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
                             <div class="alert alert-info">
                                 <strong>Nombre del Avance:</strong> <?php echo $avance['nombre_avance']; ?><br>
                                 <strong>Descripción:</strong> <?php echo nl2br($avance['texto_avance']); ?><br>
-                                <strong>Usuario:</strong> <?php echo $_SESSION['nombre']; ?><br>
+                                <strong>Usuario (Creador del Avance):</strong> <?php echo $avance['nombre_creador_avance']; ?><br>
                                 <strong>Fecha del Avance:</strong> <?php echo date('Y-m-d H:i:s', strtotime($avance['fecha_registro'])); ?><br>
                                 <?php if (!empty($avance['archivo_avance'])) : ?>
                                     <a href="<?php echo $avance['archivo_avance']; ?>" download class="btn btn-primary">Descargar archivo</a>
@@ -161,8 +194,9 @@ $usuarios_asignados = $stmt_usuarios_actividad->fetchAll(PDO::FETCH_ASSOC);
 
                                 if ($numAvances > 3) {
                                 ?>
+                                <div class="text-center">
                                 <button class="btn btn-info" id="verMasAvances" >Ver más avances</button>
-
+                                </div>
                                 <div id="avancesOcultos" style="display: none;">
                                     <?php
                                     for ($i = 3; $i < $numAvances; $i++) {

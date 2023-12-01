@@ -15,10 +15,9 @@ if (!isset($_SESSION['login_attempts'])) {
 
 
 if(isset($_SESSION['id'])){
-  header("Location: principal.php");
+  echo '<script>window.location.href = "principal.php";</script>';
+    exit();
 }
-
-
 
 ?>
 
@@ -30,6 +29,9 @@ if(isset($_SESSION['id'])){
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="public/css/login.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/2.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./img/2.png">
   <!-- CSS de Bootstrap 5 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.2/dist/css/bootstrap.min.css">
 
@@ -129,7 +131,10 @@ if ($_POST) {
               $_SESSION['tipo_usuario'] = $row['tipo_usuario'];
               
 
-              header("Location: principal.php");
+              echo '<script>
+            window.location.href = "principal.php";
+          </script>';
+    exit;
           } else {
             $_SESSION['login_attempts'] += 1;
             $_SESSION['error'] ="Contraseña inválida";
